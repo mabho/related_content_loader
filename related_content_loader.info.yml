@@ -1,0 +1,11 @@
+name: 'Related Content Loader'
+type: module
+description: 'This module loads related content dynamically based on an ID sent via AJAX call.'
+core: 8.x
+package: 'Mabho'
+libraries: 
+  - related_content_loader/related-content-loader
+
+dependencies:
+- drupal:views
+- drupal:block

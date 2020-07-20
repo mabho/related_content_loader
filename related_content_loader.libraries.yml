@@ -1,0 +1,6 @@
+related-content-loader:
+  version: 1.0
+  js:
+    js/related_content_loader.js: {}
+  dependencies:
+    - core/drupal.ajax

@@ -1,0 +1,17 @@
+related_content_loader.routing:
+  path: '/related-content-loader/{nid_app}/{nid_sub}'
+  defaults:
+    _title: 'Related Content Loader'
+    _controller: '\Drupal\related_content_loader\Controller\RelatedContentLoaderController::ajaxCallbackLoadRelated'
+  requirements:
+    _permission: 'access content'
+  options:
+    no_cache: 'TRUE'
+
+parkson_subsegments_products.closing:
+  path: '/related-content-loader/close'
+  defaults:
+    _title: 'Related Content Close'
+    _controller: '\Drupal\related_content_loader\Controller\RelatedContentLoaderController::ajaxCallbackClose'
+  requirements:
+    _permission: 'access content'
