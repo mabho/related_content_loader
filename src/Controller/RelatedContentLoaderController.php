@@ -62,25 +62,8 @@ class RelatedContentLoaderController extends ControllerBase {
       return $response;
     }
 
-    // Get the title we need for the current Industrial application.
+    // Get the title for the selected item.
     $title = $node->getTitle();
-
-    // Tests if a valid reference is set
-    /*
-    $sub_segment_item = $node->get('field_ref_sub_segment')->first();
-
-    if( !isset($sub_segment_item) ) {
-      $response->addCommand(new AlertCommand('This Sub Segment hasn\'t been set yet.'));
-      return $response;
-    }
-
-    // Now, get the parent subsegment object.
-    $sub_segment_node = $sub_segment_item
-      ->get('entity')
-      ->getTarget()
-      ->getValue()
-    ;
-    */
 
     // Gets a list of associated content.
     $view_id = $this->view_argument_01;
