@@ -25,9 +25,15 @@ class RelatedContentLoaderController extends ControllerBase {
    */
   protected $view_argument_02;
 
+  /**
+   * The ID of the layer being targeted and replaced with the View content being loaded by this class.
+   */
+  protected $layer_id;
+
   public function __construct() {
     $this->view_argument_01 = 'magazines';
     $this->view_argument_02 = 'bl_articles';
+    $this->layer_id = 'target-layer';
   }
 
   public function ajaxCallbackLoadRelated($nid) {
@@ -70,8 +76,6 @@ class RelatedContentLoaderController extends ControllerBase {
     ;
     */
 
-    $response->addCommand(new AlertCommand('The title is ' . $title));
-
     // Gets a list of associated content.
     $view_id = $this->view_argument_01;
     $view = Views::getView($view_id);
@@ -84,25 +88,27 @@ class RelatedContentLoaderController extends ControllerBase {
     $views_output_rendered = $renderer->render($views_output_array);
 
 
-    $title_text = t('Items for <strong>@title_parent</strong> > <strong>@title_child</strong>', 
+    $title_text = t('Items associated with <strong>@title</strong>', 
       [ 
-        '@title_parent' => $child_node_title,
-        '@title_child' => $title,
+        '@title' => $title,
       ]
     );
 
     // Adds a wrapper ID around the output.
+    $layer_id = $this->layer_id;
     $output = "
-  <div id=\"subsegment-products\" class=\"industrial-application-products\">
-    <div class=\"subsegment-products-inner\">
+  <div id=\"{$layer_id}\" class=\"industrial-application-products\">
+    <div class=\"{$layer_id}-inner\">
       <h2>{$title_text}</h2>
-      <a class=\"close-button use-ajax\" href=\"/industrial/applications/close\" title=\"" . t("Close the list of products.") . "\">x</a>
+      <a class=\"close-button use-ajax\" href=\"#\" title=\"" . t("close") . "\">x</a>
       {$views_output_rendered}
     </div>
   </div>";
 
+  $response->addCommand(new AlertCommand('The layer id is ' . $layer_id));
+
     // Proceeds with the appropriate replacements.
-    $response->addCommand( new ReplaceCommand( '#subsegment-products', $output ) );
+    $response->addCommand( new ReplaceCommand( "#" . $layer_id, $output ) );
 
     // Fades sibling elements.
     $response->addCommand( 
@@ -111,24 +117,8 @@ class RelatedContentLoaderController extends ControllerBase {
         "disableSiblings",
         array(
           array(
-            'target' => ".link-sub-id-{$nid_sub}",
+            'target' => ".link-id-{$nid}",
             'comparison_layer' => '.item-list',
-            'speed_transition' => 250,
-            'partial_opacity' => 0.35
-          )
-        ) 
-      )
-    );
-
-    // Fades current list sibling elements.
-    $response->addCommand( 
-      new InvokeCommand(
-        NULL,
-        "disableSiblings",
-        array(
-          array(
-            'target' => ".link-app-id-{$nid_app}",
-            'comparison_layer' => '.industry-subsegment-wrapper',
             'speed_transition' => 250,
             'partial_opacity' => 0.35
           )
