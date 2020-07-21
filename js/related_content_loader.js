@@ -36,10 +36,11 @@
 
       // Defines opacity of elements not clicked.
       $(target).parents(comparison_layer).stop().animate({backgroundColor: '#53cc98', opacity : 1}, speed_transition, function() {
-        $(this).siblings().stop().animate({opacity : partial_opacity}, speed_transition);
+        $(this).siblings(comparison_layer).stop().animate({opacity : partial_opacity}, speed_transition);
       })
     }
   };
+
 
   /**
   * A jQuery plugin that scrolls to a given position.
@@ -63,7 +64,6 @@
         let destination = jQuery(target).offset().top - 160;
 
         // Removes toolbar height from calculations, if it exists in the page
-        let toolbarHeight = 0;
         let toolbar = jQuery('#toolbar');
         if(toolbar.length > 0) { destination = (destination - toolbar.height()); }
 

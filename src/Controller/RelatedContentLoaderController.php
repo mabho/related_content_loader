@@ -30,10 +30,16 @@ class RelatedContentLoaderController extends ControllerBase {
    */
   protected $layer_id;
 
+  /**
+   * The ID of an element being used as target destination for scrolling.
+   */
+  protected $scroll_back_to_id;
+
   public function __construct() {
     $this->view_argument_01 = 'magazines';
     $this->view_argument_02 = 'bl_articles';
     $this->layer_id = 'target-layer';
+    $this->scroll_back_to = 'base-layer';
   }
 
   public function ajaxCallbackLoadRelated($nid) {
@@ -97,18 +103,18 @@ class RelatedContentLoaderController extends ControllerBase {
     // Adds a wrapper ID around the output.
     $layer_id = $this->layer_id;
     $output = "
-  <div id=\"{$layer_id}\" class=\"industrial-application-products\">
+  <div id=\"{$layer_id}\">
     <div class=\"{$layer_id}-inner\">
       <h2>{$title_text}</h2>
-      <a class=\"close-button use-ajax\" href=\"#\" title=\"" . t("close") . "\">x</a>
+      <a class=\"close-button use-ajax\" href=\"/related-content-loader/close\" title=\"" . t("close") . "\">x</a>
       {$views_output_rendered}
     </div>
   </div>";
 
-  $response->addCommand(new AlertCommand('The layer id is ' . $layer_id));
+  //$response->addCommand(new AlertCommand('The layer id is ' . $layer_id));
 
     // Proceeds with the appropriate replacements.
-    $response->addCommand( new ReplaceCommand( "#" . $layer_id, $output ) );
+    $response->addCommand( new ReplaceCommand( "#{$layer_id}", $output ) );
 
     // Fades sibling elements.
     $response->addCommand( 
@@ -133,7 +139,7 @@ class RelatedContentLoaderController extends ControllerBase {
         "scrollTo",
         array(
           array(
-            'target' => "#subsegment-products",
+            'target' => "#{$layer_id}",
             'speed_transition' => 500
           )
         ) 
@@ -152,24 +158,13 @@ class RelatedContentLoaderController extends ControllerBase {
     // Instantiates the response object
     $response = new AjaxResponse();
 
-    $response->addCommand(
-      new InvokeCommand(
-        '.industrial-application-products',
-        'fadeOut'
-      )
-    );
+    $layer_id = $this->layer_id;
+    $scroll_back_to_id = $this->scroll_back_to_id;
 
-    // Fades sibling layers of the clicked item.
     $response->addCommand(
       new InvokeCommand(
-        NULL,
-        'restoreDefaults',
-        array(
-          array(
-            'target' => ".industry-subsegment-wrapper",
-            'speed_transition' => 250
-          )
-        )
+        "#{$layer_id}",
+        'fadeOut'
       )
     );
 
@@ -194,46 +189,12 @@ class RelatedContentLoaderController extends ControllerBase {
         'scrollTo',
         array(
           array(
-            'target' => "#block--views-block--bl-industrial-applications",
+            'target' => "#{$scroll_back_to_id}",
             'speed_transition' => 500,
           )
         )
       )
     );
-
-/*
-    // Fades in other layers (not the one corresponding to the Industrial application clicked)
-    $commands[] = ajax_command_invoke(
-      NULL,
-      "restoreDefaults",
-      array(
-        array(
-          'target' => ".node-industrial-application",
-          'speed_transition' => 250
-        )
-      )
-    );
-
-    
-    $commands[] = ajax_command_invoke(
-      NULL,
-      "scrollTo",
-      array(
-        array(
-          'target' => "#node-full-content-subsegments-wrapper",
-          'speed_transition' => 500,
-        )
-      )
-    );
-
-    $page = array(
-      '#type' => 'ajax',
-      '#commands' => $commands,
-    );
-
-    ajax_deliver($page);
-*/
-
 
     return $response;
 
