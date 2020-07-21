@@ -1,5 +1,5 @@
 related_content_loader.routing:
-  path: '/related-content-loader/{nid_app}/{nid_sub}'
+  path: '/related-content-loader/{nid}'
   defaults:
     _title: 'Related Content Loader'
     _controller: '\Drupal\related_content_loader\Controller\RelatedContentLoaderController::ajaxCallbackLoadRelated'

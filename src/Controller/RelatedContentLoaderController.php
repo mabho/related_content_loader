@@ -27,22 +27,22 @@ class RelatedContentLoaderController extends ControllerBase {
 
   public function __construct() {
     $this->view_argument_01 = 'magazines';
-    $this->view_argument_02 = 'articles';
+    $this->view_argument_02 = 'bl_articles';
   }
 
-  public function ajaxCallbackLoadRelated($nid_app, $nid_sub) {
+  public function ajaxCallbackLoadRelated($nid) {
 
     // Instantiates the response object
     $response = new AjaxResponse();
 
     // Tests if the argument received is numeric.
-    if(!is_numeric($nid_app) OR !is_numeric($nid_sub)) {
+    if(!is_numeric($nid)) {
       $response->addCommand(new AlertCommand('Valid numeric IDs must be provided for application and related content. That didn\'t happen, though.'));
       return $response;
     }
 
     // Loads the application node object.
-    $node = \Drupal::entityManager()->getStorage('node')->load($nid_app);
+    $node = \Drupal::entityManager()->getStorage('node')->load($nid);
 
     // If a valid node could not be found, deliver empty result.
     if(!$node) {
@@ -70,25 +70,13 @@ class RelatedContentLoaderController extends ControllerBase {
     ;
     */
 
-    // Gets the associated Sub Segment.
-    $child_node = \Drupal::entityManager()->getStorage('node')->load($nid_sub);
-
-    // Halt execution of a parent subsegment cannot be found.
-    if(!$child_node) {
-      $response->addCommand(new AlertCommand("An associated content could not be loaded. The ID was {$nid_sub}"));
-      return $response;
-    }
-
-    // Get the title for the parent Sub Segment.
-    $child_node_title = $child_node->getTitle();
-
-    $response->addCommand(new AlertCommand('The title is ' . $child_node_title));
+    $response->addCommand(new AlertCommand('The title is ' . $title));
 
     // Gets a list of associated content.
     $view_id = $this->view_argument_01;
     $view = Views::getView($view_id);
     $view->setDisplay($this->view_argument_02);
-    $view->setArguments([$nid_app]);
+    $view->setArguments([$nid]);
     $views_output_array = $view->buildRenderable();
 
     // Prepares rendering
